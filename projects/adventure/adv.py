@@ -1,6 +1,7 @@
 from room import Room
 from player import Player
 from world import World
+from util import Stack
 
 import random
 from ast import literal_eval
@@ -29,6 +30,38 @@ player = Player(world.starting_room)
 # traversal_path = ['n', 'n']
 traversal_path = []
 
+s = Stack()
+
+visited = set()
+
+totalRooms = len(world.rooms)
+
+while len(visited) < totalRooms:
+    exits = player.current_room.get_exits()
+    directions = []
+
+    for exit in exits:
+        if player.current_room.get_room_in_direction(exit) not in visited and exit:
+            directions.append(exit)
+    visited.add(player.current_room)
+
+    if directions:
+        moveIndex = random.choice(directions)
+        s.push(moveIndex)
+        player.travel(moveIndex)
+        traversal_path.append(moveIndex)
+    else:
+        end = s.pop()
+        if end == 'n':
+            end = 's'
+        elif end == 's':
+            end = 'n'
+        elif end == 'e':
+            end = 'w'
+        elif end == 'w':
+            end = 'e'
+        player.travel(end)
+        traversal_path.append(end)
 
 
 # TRAVERSAL TEST
@@ -51,12 +84,12 @@ else:
 #######
 # UNCOMMENT TO WALK AROUND
 #######
-player.current_room.print_room_description(player)
-while True:
-    cmds = input("-> ").lower().split(" ")
-    if cmds[0] in ["n", "s", "e", "w"]:
-        player.travel(cmds[0], True)
-    elif cmds[0] == "q":
-        break
-    else:
-        print("I did not understand that command.")
+# player.current_room.print_room_description(player)
+# while True:
+#     cmds = input("-> ").lower().split(" ")
+#     if cmds[0] in ["n", "s", "e", "w"]:
+#         player.travel(cmds[0], True)
+#     elif cmds[0] == "q":
+#         break
+#     else:
+#         print("I did not understand that command.")
